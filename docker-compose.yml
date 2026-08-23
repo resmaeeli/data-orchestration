@@ -7,9 +7,13 @@ services:
     ports:
       - "8080:8080"
 
-    volumes:
+    volumes:      
       - ./dags:/opt/airflow/dags
+      - ../data-portfolio:/opt/airflow/data-portfolio
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
 
     command: standalone
+    
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
