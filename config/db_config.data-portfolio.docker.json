@@ -1,0 +1,24 @@
+{
+    "databases": {
+        "sqlserver": {
+            "type": "sqlserver",
+            "server": "host.docker.internal",
+            "port": 1433,
+            "database": "AdventureWorks2022",
+            "username": "sa",
+            "password": "YourStrong@Pass123",
+            "query_path": "db/sqlserver",
+            "trust_server_certificate": "yes",
+            "Encrypt": "no"
+        },
+        "postgresql": {
+            "type": "postgresql",
+            "server": "host.docker.internal",
+            "port": 5432,
+            "database": "pagila",
+            "username": "postgres",
+            "password": "YourStrong@Pass123",
+            "query_path": "db/postgresql"
+        }
+    }
+}

@@ -4,13 +4,16 @@ from datetime import datetime
 from airflow.sdk import DAG
 from airflow.providers.standard.operators.python import PythonOperator
 
-sys.path.insert(0, "/opt/airflow/data-portfolio/python")
+# sys.path.insert(0, "/opt/airflow/data-portfolio/python")
+sys.path.insert(0, "/opt/airflow/data-portfolio/powerbi")
 
-from run import run_job
+# from run import run_job
+from build_dataset import main
 
 
 def export_task():
-    run_job("orders_per_year", "csv")
+    main()
+    # run_job("orders_per_year", "csv")
 
 
 with DAG(
@@ -22,6 +25,6 @@ with DAG(
 ) as dag:
 
     export = PythonOperator(
-        task_id="export_orders_per_year",
+        task_id="build_all_datasets",
         python_callable=export_task,
     )

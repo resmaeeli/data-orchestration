@@ -4,12 +4,16 @@ services:
     image: apache/airflow:3.1.0
     restart: unless-stopped
 
+    environment:      
+      DB_CONFIG_PATH: /opt/airflow/config/db_config.data-portfolio.docker.json
+
     ports:
       - "8080:8080"
 
     volumes:      
       - ./dags:/opt/airflow/dags
       - ../data-portfolio:/opt/airflow/data-portfolio
+      - ./config:/opt/airflow/config
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
 
@@ -17,3 +21,5 @@ services:
     
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+    
