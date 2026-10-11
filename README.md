@@ -53,11 +53,13 @@ The `Data-Portfolio` project is mounted into the Airflow container through Docke
 
 ## Start Airflow
 
-Open PowerShell and navigate to the `data-orchestration` directory:
+Open PowerShell and navigate to the `data-orchestration` project directory:
 
 ```powershell
-cd D:\IMG-DE\data-orchestration
+cd path\to\data-orchestration
 ```
+
+Replace the example path with the actual location of your project.
 
 Start the Airflow environment:
 
@@ -116,38 +118,46 @@ The Docker-specific configuration also contains the required SQL Server encrypti
 
 The configuration is mounted into the Airflow container together with the Data-Portfolio project.
 
+
 ## Airflow DAG
 
-The main DAG is:
+The main DAG is `data_portfolio_export`.
 
-```text
-data_portfolio_export
-```
-The DAG is responsible for running the Data-Portfolio dataset generation process.
+It orchestrates the existing Data-Portfolio export pipeline using **Dynamic Task Mapping**.
 
-It is configured for manual execution and does not use a scheduled interval.
+The workflow consists of:
+
+1. `get_jobs`: Loads the configured export jobs.
+2. `export_job`: Creates one mapped task for each job and calls the existing `run_job()` function.
+3. Each export task has its own execution status, logs, and retry handling.
+
+When a new job is added to the export configuration, Airflow automatically creates a corresponding mapped task.
+
+The DAG is configured for manual execution and does not use a scheduled interval.
 
 To run the DAG:
 
-1. Open the Airflow Web UI.
+1. Open the Airflow Web UI at [http://localhost:8080](http://localhost:8080).
 2. Find `data_portfolio_export`.
 3. Open the DAG.
 4. Click **Trigger DAG**.
-5. Monitor the execution from the DAG graph and task logs.
+5. Monitor the mapped tasks in the DAG graph and inspect individual task logs.
 
 ## Dataset Generation
 
-The Data-Portfolio pipeline generates datasets from all configured export jobs.
+The Data-Portfolio project contains the core ETL and dataset export logic. The same logic can be executed independently from the command line or orchestrated through Airflow.
 
-The dataset builder can be executed from the command line:
+### Command-Line Execution
+
+To run all configured export jobs:
 
 ```powershell
 python .\powerbi\build_dataset.py
 ```
 
-A specific output format can also be provided:
+To specify an output format:
 
-``` powershell
+```powershell
 python .\powerbi\build_dataset.py csv
 ```
 
@@ -157,8 +167,11 @@ Supported output formats:
 - JSON
 - Parquet
 
-When executed through Airflow, the same dataset generation process is triggered by the data_portfolio_export DAG.
+### Airflow Execution
 
+When `data_portfolio_export` is triggered, Airflow loads the configured jobs and creates one mapped task per job. Each task calls the existing `run_job()` function.
+
+This approach keeps orchestration separate from the core ETL logic and allows individual jobs to be monitored and retried independently.
 
 ## Output
 
